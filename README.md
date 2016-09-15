@@ -19,7 +19,7 @@ This way, you can keep up to date with fast-moving developments of mobs based on
 
 The following stands as an example, and as a reference usage of the intended API:
 
-	mobs.override:mob(
+	mobs.override(
 		name = "mobs:name",
 		{
 			-- imperative substitution
@@ -45,9 +45,8 @@ The following stands as an example, and as a reference usage of the intended API
 			-- function chaining, and conditions
 
 			property5 = {
-				fchain_type = "after", -- "before", "after", "replace" -- whether the new function should run before or after the existing function, or replace it
-				fchain_cond = value, -- the value expected from the first function called in order for the second to execute
-				fchain_func = function(opts) dostuff() end, -- the new function to provide
+				fchain_type = "after", -- "before", "after" -- whether the new function should run before or after the existing function
+				fchain_func = function(opts) dostuff() end, -- the new function to provide - in "before" mode, can return false to prevent original function running afterwards
 			}
 		},
 		check = { -- check the object for properties before applying overrides
@@ -63,4 +62,4 @@ The following stands as an example, and as a reference usage of the intended API
 		}
 	)
 
-	mobs.override:mob(mobname, newdefs) -- and again, check table is optional
+	mobs.override(mobname, newdefs) -- and again, check table is optional
