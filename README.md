@@ -20,7 +20,7 @@ This way, you can keep up to date with fast-moving developments of mobs based on
 The following stands as an example, and as a reference usage of the intended API:
 
 	mobs.override(
-		name = "mobs:name",
+		name = "modname:mobname",
 		{
 			-- imperative substitution
 
@@ -31,35 +31,18 @@ The following stands as an example, and as a reference usage of the intended API
 			-- conditional substitution of values
 
 			property3 = { -- substitute value onto property3 only if the old value IS NOT equal to the target value
-				mode = "diff",
-				target = true,
-				value = "new value"
-			},
-
-			property4 = { -- substitute value onto property4 only if the old value IS equal to the target value
-				mode = "match",
-				target = nil,
+				check = function(oldvalue) return true end -- handler function to check the old value. return true to apply value override
 				value = "new value"
 			},
 
 			-- function chaining, and conditions
 
-			property5 = {
+			property4 = {
 				fchain_type = "after", -- "before", "after" -- whether the new function should run before or after the existing function
-				fchain_func = function(opts) dostuff() end, -- the new function to provide - in "before" mode, can return false to prevent original function running afterwards
+				fchain_func = function(opts) dostuff() end, -- the new function to provide - in "before" mode, must return true to cause original function to run afterwards
 			}
 		},
-		check = { -- check the object for properties before applying overrides
-			mode = "and", -- "and", or "or"
-			propertyname = { -- only apply if this property is different from the target value
-				mode = "diff",
-				target = "value",
-			},
-			propertyname2 = { -- also meet this condition, if check mode is "and"
-				mode = "match",
-				target = "value2",
-			}
-		}
+		check = function(themob) return true end -- handler function that takes the registered entity as argument. return true to apply override
 	)
 
-	mobs.override(mobname, newdefs) -- and again, check table is optional
+	mobs.override(mobname, newdefs) -- and again, check function is optional
