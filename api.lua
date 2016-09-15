@@ -55,6 +55,7 @@ local mobs_override = function(mobname,def,check)
 			end
 		end
 	end
+	return themob
 end
 
 mobs.override = mobs_override
