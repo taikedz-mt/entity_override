@@ -23,7 +23,7 @@ local mobs_override = function(mobname,def,check)
 			themob[property] = definition
 
 		elseif type(definition) == "table" then
-			if type(definition.check) == "function"
+			if type(definition.check) == "function" then
 				if definition.check(themob[property]) then themob[property] = definition.value end
 
 			elseif sethas(definition.fchain_type, {"after","before"}) and type(fchain_func) == "function" then
@@ -31,13 +31,17 @@ local mobs_override = function(mobname,def,check)
 				if type(extantf) == "function" then
 					if definition.fchain_type == "after" then
 						themob[property] = function(...)
-							extantf( unpack(arg) )
-							definition.fchain_func( unpack(arg) )
+							local newargs = {}
+							for i,val in ipairs(arg) do if i > 1 then newargs[i] = val end end
+							extantf( unpack(newargs) )
+							definition.fchain_func( unpack(newargs) )
 						end
 					elseif definition.fchain_type == "before" then
 						themob[property] = function(...)
-							if definition.fchain_func( unpack(arg) ) == true then -- check for the actual boolean value
-								extantf( unpack(arg) )
+							local newargs = {}
+							for i,val in ipairs(arg) do if i > 1 then newargs[i] = val end end
+							if definition.fchain_func( unpack(newargs) ) == true then -- check for the actual boolean value
+								extantf( unpack(newargs) )
 							end
 						end
 					end
