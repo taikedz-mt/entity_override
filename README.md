@@ -26,28 +26,41 @@ The following stands as an example, and as a reference usage of the intended API
 
 			property1 = "value", -- a plain value substitution
 
-			property2 = function(opt) end, -- just substitute the function
+			property2 = function(opt) dothings() end, -- just substitute the function
 
 			-- conditional substitution of values
 
-			property3 = {
-				ifnot = true, -- substitute value onto property3 only if the old value IS NOT equal to the ifnot value
+			property3 = { -- substitute value onto property3 only if the old value IS NOT equal to the target value
+				mode = "diff",
+				target = true,
 				value = "new value"
 			},
 
-			property4 = {
-				ifis = nil, -- substitute value onto property4 only if the old value IS equal to the ifis value
+			property4 = { -- substitute value onto property4 only if the old value IS equal to the target value
+				mode = "match",
+				target = nil,
 				value = "new value"
 			},
 
-			-- function chaining
+			-- function chaining, and conditions
 
 			property5 = {
-				function_override_type = "after", -- "before", "after" -- whether the new function should run before or after the existing function
-				function_override_cond = value, -- the value expected from the first function called in order for the second to execute
-				function_override_func = function(opts) end, -- the new function to provide
+				fchain_type = "after", -- "before", "after", "replace" -- whether the new function should run before or after the existing function, or replace it
+				fchain_cond = value, -- the value expected from the first function called in order for the second to execute
+				fchain_func = function(opts) dostuff() end, -- the new function to provide
+			}
+		},
+		check = { -- check the object for properties before applying overrides
+			mode = "and", -- "and", or "or"
+			propertyname = { -- only apply if this property is different from the target value
+				mode = "diff",
+				target = "value",
+			},
+			propertyname2 = { -- also meet this condition, if check mode is "and"
+				mode = "match",
+				target = "value2",
 			}
 		}
 	)
 
-	mobs.override:mob(mobname, newdefs) -- and again
+	mobs.override:mob(mobname, newdefs) -- and again, check table is optional
