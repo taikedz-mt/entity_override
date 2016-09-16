@@ -11,6 +11,8 @@ end
 
 local mobs_override = function(mobname,def,check)
 	local themob = minetest.registered_entities[mobname]
+	if not themob then return end
+
 	if type(check) == "function" then
 		if not check(themob) then return end
 	end
@@ -26,7 +28,7 @@ local mobs_override = function(mobname,def,check)
 			if type(definition.check) == "function" then
 				if definition.check(themob[property]) then themob[property] = definition.value end
 
-			if definition.check == "assignment" and definition.value then -- straight definition
+			elseif definition.value then -- straight definition
 				themob[property] = definition.value
 
 			elseif sethas(definition.fchain_type, {"after","before"}) and type(definition.fchain_func) == "function" then
