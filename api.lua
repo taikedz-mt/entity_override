@@ -1,6 +1,6 @@
 -- mobs override
 
-mobs.override = {}
+override = {}
 
 local sethas = function(needle,haystack)
 	for _,i in pairs(haystack) do
@@ -26,6 +26,9 @@ local mobs_override = function(mobname,def,check)
 			if type(definition.check) == "function" then
 				if definition.check(themob[property]) then themob[property] = definition.value end
 
+			if definition.check == "assignment" and definition.value then -- straight definition
+				themob[property] = definition.value
+
 			elseif sethas(definition.fchain_type, {"after","before"}) and type(definition.fchain_func) == "function" then
 				local extantf = themob[property]
 				if type(extantf) == "function" then
@@ -46,12 +49,11 @@ local mobs_override = function(mobname,def,check)
 					minetest.debug("Expected existing function in "..property.." for "..mobname.." but got a "..type(extantf))
 				end
 			else
-				minetest.debug("Assigning table directly for "..mobname.." : "..property)
-				themob[property] = definition -- actually assign the table
+				minetest.debug("Invalid substitution definition of "..property.." for "..mobname)
 			end
 		end
 	end
 	return themob
 end
 
-mobs.override = mobs_override
+override.rewrite = mobs_override
