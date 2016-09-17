@@ -1,3 +1,3 @@
-dofile(minetest.get_modpath("override").."/api.lua")
+dofile(minetest.get_modpath("entity_override").."/api.lua")
 
 
