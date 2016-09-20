@@ -1,4 +1,4 @@
--- mobs override
+-- lua entities overrider
 
 override = {}
 
@@ -58,4 +58,18 @@ local mobs_override = function(mobname,def,check)
 	return themob
 end
 
+local mobs_clone = function(mobname,newname)
+	local themob = minetest.registered_entities[mobname]
+	if not themob then return end
+
+	newmobdef = {}
+
+	for k,v in pairs(themob) do
+		newmobdef[k] = v -- shallow clone
+	end
+
+	mobs.register_mob(newname,newmobdef)
+end
+
 override.rewrite = mobs_override
+override.clone = mobs_clone
