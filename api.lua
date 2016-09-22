@@ -9,10 +9,10 @@ local sethas = function(needle,haystack)
 	return false
 end
 
-local litejoin_tables = function(table1,table2)
+local concat_tables = function(table1,table2)
 	local newtable = {}
-	if table1 ~= nil then for k,v in pairs(table1) do newtable[k] = v end end
-	if table2 ~= nil then for k,v in pairs(table2) do newtable[k] = v end end
+	if table1 ~= nil then for _,v in ipairs(table1) do newtable[#newtable+1] = v end end
+	if table2 ~= nil then for _,v in ipairs(table2) do newtable[#newtable+1] = v end end
 	return newtable
 end
 
@@ -37,9 +37,9 @@ local mobs_override = function(mobname,def,check)
 
 			elseif definition.value then -- straight definition
 				if definition.tableorder == "append" then
-					themob[property] = litejoin_tables(themob[property],definition.value)
+					themob[property] = concat_tables(themob[property],definition.value)
 				elseif definition.tableorder == "prepend" then
-					themob[property] = litejoin_tables(definition.value,themob[property])
+					themob[property] = concat_tables(definition.value,themob[property])
 				else
 					themob[property] = definition.value
 				end
@@ -71,17 +71,27 @@ local mobs_override = function(mobname,def,check)
 	return themob
 end
 
+local function shallowclone(thetable)
+	local newtable = {}
+	minetest.debug(dump(thetable))
+	for k,v in pairs(thetable) do
+		newtable[k] = v
+	end
+	minetest.debug(dump(newtable))
+	return newtable
+end
+
 local mobs_clone = function(mobname,newname)
 	local themob = minetest.registered_entities[mobname]
 	if not themob then return end
 
-	newmobdef = {}
+	local newmobdef = shallowclone(themob)
 
-	for k,v in pairs(themob) do
-		newmobdef[k] = v -- shallow clone
+	if newmobdef.table == nil then
+		minetest.debug("No textures available")
+	else
+		mobs:register_mob(newname,newmobdef)
 	end
-
-	mobs.register_mob(newname,newmobdef)
 end
 
 override.rewrite = mobs_override
