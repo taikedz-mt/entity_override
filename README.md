@@ -29,7 +29,7 @@ The definition is simple a table, whose keys are the names of the properties in 
 
 ### Straight subsitution
 
-The values can be straight values (string, number, function) or a table representing the substituion rules.
+The values can be straight values (string, number, boolean, function) or a table representing the substitution rules.
 
 For example
 
@@ -62,6 +62,7 @@ Note that to assign tables, you need to write a conditional substitution - but y
 
 	override:rewrite("mobs_slimes:slime_small",{
 		textures = {
+			tableorder = "append", -- or "prepend", this parameter is optional in case the order will be important
 			value = {"newtexture_front.png","newtexture_side.png"} -- the actual table that will be assigned
 		}
 	})
@@ -91,3 +92,20 @@ In the case of a `"before"` type, where your custom function runs before the ori
 	})
 
 This will add funcitonality before the normal right-click routine (presuming `mobs_redo` is in use, it would be the feeding and taming functionality), passing control to the original handler if the animal is generally not tamed, or if the item in hand is what the animal follows; in any other case, some custom code is run and the original handler is skipped.
+
+## Mob Cloning
+
+You can clone an existing mob as your own and give it extra definitions. For example, say your mod is `mydmobs`, and you want an extra hedgehog, for battle purposes. You could do:
+
+	override.clone("dmobs:hedgehog","mydmobs:battlehedgehog")
+
+	override.rewrite("mydmobs:battlehedgehog",{
+		type = "npc",
+		hp_max = 20,
+		hp_min = 18,
+		armor = 100,
+		attack_mosters = true,
+		attack_type = "dogfight",
+	})
+
+Now in addition to the regular dmobs hedgehogs, you also have your own mod's hedgehog clones ready to defend you!
