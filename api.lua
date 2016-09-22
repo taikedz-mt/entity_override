@@ -93,7 +93,7 @@ local mobs_clone = function(mobname,newname)
 
 	local newmobdef = shallowclone(themob)
 
-	if newmobdef.table == nil then
+	if newmobdef.textures == nil then
 		minetest.debug("No textures available")
 	else
 		mobs:register_mob(newname,newmobdef)
