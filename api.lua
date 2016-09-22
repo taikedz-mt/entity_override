@@ -25,17 +25,22 @@ local mobs_override = function(mobname,def,check)
 	end
 
 	for property,definition in pairs(def) do
+		-- minetest.debug("Redefine "..property)
 		if type(definition) == "string"
 		or type(definition) == "number"
 		or type(definition) == "function"
+		or type(definition) == "boolean"
 		then
+			--minetest.debug(" ... simply as "..dump(definition) )
 			themob[property] = definition
 
 		elseif type(definition) == "table" then
+			--minetest.debug(" ... with table ")
 			if type(definition.check) == "function" then
 				if definition.check(themob[property]) then themob[property] = definition.value end
 
 			elseif definition.value then -- straight definition
+				--minetest.debug(" ... as tablevalue "..dump(definition) )
 				if definition.tableorder == "append" then
 					themob[property] = concat_tables(themob[property],definition.value)
 				elseif definition.tableorder == "prepend" then
@@ -45,6 +50,7 @@ local mobs_override = function(mobname,def,check)
 				end
 
 			elseif sethas(definition.fchain_type, {"after","before"}) and type(definition.fchain_func) == "function" then
+				--minetest.debug(" ... as a function")
 				local extantf = themob[property]
 				if type(extantf) == "function" then
 					if definition.fchain_type == "after" then
