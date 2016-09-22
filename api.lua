@@ -9,6 +9,13 @@ local sethas = function(needle,haystack)
 	return false
 end
 
+local litejoin_tables = function(table1,table2)
+	local newtable = {}
+	if table1 ~= nil then for k,v in pairs(table1) do newtable[k] = v end end
+	if table2 ~= nil then for k,v in pairs(table2) do newtable[k] = v end end
+	return newtable
+end
+
 local mobs_override = function(mobname,def,check)
 	local themob = minetest.registered_entities[mobname]
 	if not themob then return end
@@ -29,7 +36,13 @@ local mobs_override = function(mobname,def,check)
 				if definition.check(themob[property]) then themob[property] = definition.value end
 
 			elseif definition.value then -- straight definition
-				themob[property] = definition.value
+				if definition.tableorder == "append" then
+					themob[property] = litejoin_tables(themob[property],definition.value)
+				elseif definition.tableorder == "prepend" then
+					themob[property] = litejoin_tables(definition.value,themob[property])
+				else
+					themob[property] = definition.value
+				end
 
 			elseif sethas(definition.fchain_type, {"after","before"}) and type(definition.fchain_func) == "function" then
 				local extantf = themob[property]
