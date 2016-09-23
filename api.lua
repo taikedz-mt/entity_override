@@ -79,19 +79,35 @@ end
 
 local function shallowclone(thetable)
 	local newtable = {}
-	minetest.debug(dump(thetable))
 	for k,v in pairs(thetable) do
 		newtable[k] = v
 	end
-	minetest.debug(dump(newtable))
 	return newtable
 end
+
+local function deepclone (t) -- deep-copy a table -- from https://gist.github.com/MihailJP/3931841
+	if type(t) ~= "table" then return t end
+
+	local meta = getmetatable(t)
+	local target = {}
+	
+	for k, v in pairs(t) do
+		if k ~= "__index" and type(v) == "table" then -- omit circular reference
+			target[k] = deepclone(v)
+		else
+			target[k] = v
+		end
+	end
+	setmetatable(target, meta)
+	return target
+end 
 
 local mobs_clone = function(mobname,newname)
 	local themob = minetest.registered_entities[mobname]
 	if not themob then return end
 
-	local newmobdef = shallowclone(themob)
+	local newmobdef = deepclone(themob)
+	newmobdef.__index = newmobdef -- circular reference to self, not old mob def
 
 	if newmobdef.textures == nil then
 		minetest.debug("No textures available")
